@@ -1,1 +1,70 @@
 @page "/products"
+@using Data
+@using Models
+@using Microsoft.EntityFrameworkCore
+
+@inject DatabaseContext ContextDB
+
+<h3>Products</h3>
+
+
+
+@code{
+    private List<Product> products;
+    private bool showForm = false;
+    private Product currentProduct = new Product();
+
+    protected override async Task OnInitializedAsync(){
+        await LoadProducts();
+    }
+ 
+    protected async Task LoadProducts(){
+        products = await ContextDB.Products.ToListAsync();
+    }
+
+    private void NewProduct(){
+        currentProduct = new Product();
+        showForm = true;
+    }
+
+    private void EditProduct(Product product)
+    {
+        currentProduct = new Product {
+            Id = product.Id,
+            Name = product.Name,
+            Description = product.Description,
+            Price = product.Price,
+        };
+        showForm = true;
+    }
+
+    private async Task DeleteProdcuts(Product product)
+    {
+        ContextDB.Products.Remove(product);
+        await ContextDB.SaveChangesAsync();
+        await LoadProducts();
+    } 
+
+    private async Task SaveProduct()
+    {
+        if(currentProduct.Id == 0)
+        {
+            ContextDB.Products.Add(currentProduct);
+        }
+        else 
+        {
+            ContextDB.Products.Update(currentProduct);
+        }
+
+        await ContextDB.SaveChangesAsync();
+        await LoadProducts();
+        CloseForm();
+    }
+    
+    private void CloseForm()
+    {
+        showForm = false;
+        currentProduct = new Product();
+    }
+
+}

@@ -7,8 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddRazorPages();
+builder.Services.AddServerSideBlazor();
 
-builder.Services.AddDbContext<MyContext>(  options => options.UseSqlite("Data Source=todo.db"));
+builder.Services.AddDbContext<DatabaseContext>(  options => options.UseSqlite("Data Source=todo.db"));
 var app = builder.Build();
 
 
