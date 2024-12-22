@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace todo.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20241217182602_inicial")]
-    partial class first
+    [Migration("20241221190304_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,6 +37,9 @@ namespace todo.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace todo.Migrations
 {
-    [DbContext(typeof(MyContext))]
+    [DbContext(typeof(DatabaseContext))]
     partial class MyContextModelSnapshot : ModelSnapshot
     {
         protected override void BuildModel(ModelBuilder modelBuilder)
@@ -34,6 +34,9 @@ namespace todo.Migrations
 
                     b.Property<decimal>("Price")
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
 

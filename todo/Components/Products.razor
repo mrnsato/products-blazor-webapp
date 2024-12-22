@@ -7,6 +7,76 @@
 
 <h3>Products</h3>
 
+<button class="btn btn-primary" @onclick="NewProduct"> Novo Produto </button>
+
+@if (products == null)
+{
+    <p> Carregando ... </p>
+}
+else 
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th> Name </th>
+                <th> Description </th>
+                <th> Price </th>
+                <th> Quantity></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+              <tr>
+                <td> @product.Name</td>
+                <td> @product.Description</td>
+                <td> @product.Price</td>
+                <td> @product.Quantity</td>
+                <td>
+                    <button class="btn btn-primary" @onclick="() => EditProduct(product)"> Editar </button>
+                    <button class="btn btn-danger" @onclick="() => DeleteProdcuts(product)"> Excluir </button>
+                </td>
+             </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (showForm)
+{
+    <div class="modal" tabindex="-1" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">(@currentProduct.Id == 0 ? "New Product" : "Edit Product")</h5>
+                    <button type="button" class="btn-close" @onclick="CloseForm"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="name">Nome</label>
+                        <input type="text" class="form-control" id="name" @bind="currentProduct.Name"> 
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descrição</label>
+                        <input type="text" class="form-control" id="description" @bind="currentProduct.Description">
+                    </div>
+                    <div class="form-group">
+                        <label for="price">Preço</label>
+                        <input type="number" class="form-control" id="price" @bind="currentProduct.Price">
+                    </div>
+                    <div class="form-group">
+                        <label for="quantity">Quantidade</label>
+                        <input type="number" class="form-control" id="quantity" @bind="currentProduct.Quantity">
+                    </div>
+                    <div class="modoal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="CloseForm">Fechar</button>
+                        <button type="button" class="btn btn-primary" @onclick="SaveProduct">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 
 @code{
@@ -34,31 +104,51 @@
             Name = product.Name,
             Description = product.Description,
             Price = product.Price,
+            Quantity = product.Quantity
         };
         showForm = true;
     }
 
     private async Task DeleteProdcuts(Product product)
     {
+        try
+        {
+        Console.WriteLine("Excluindo produto: " + product.Name);
         ContextDB.Products.Remove(product);
         await ContextDB.SaveChangesAsync();
         await LoadProducts();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Erro ao excluir produto: " + ex.Message);
+        }
+       
     } 
 
     private async Task SaveProduct()
     {
+        try
+        {
+
         if(currentProduct.Id == 0)
         {
+            Console.WriteLine("Adicionando novo produto: " + currentProduct.Name);
             ContextDB.Products.Add(currentProduct);
         }
         else 
         {
+            Console.WriteLine("Atualizando produto: " + currentProduct.Name);
             ContextDB.Products.Update(currentProduct);
         }
 
         await ContextDB.SaveChangesAsync();
         await LoadProducts();
         CloseForm();
+        }
+        catch(Exception ex)
+        {
+            Console.WriteLine("Erro ao salvar produto: " + ex.Message);
+        }
     }
     
     private void CloseForm()
